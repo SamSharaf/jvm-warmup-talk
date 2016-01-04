@@ -1,4 +1,7 @@
 *.class
+.idea/
+*.iml
+gradle-wrapper.properties
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
