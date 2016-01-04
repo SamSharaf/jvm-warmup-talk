@@ -13,6 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+plugins {
+    id 'me.champeau.gradle.jmh' version '0.2.0'
+}
+
+
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
@@ -30,6 +35,18 @@ ext {
     sourceUrl = ''
 
     javaCompilerExecutable = System.env['JAVA_HOME'] ? System.env['JAVA_HOME'] + '/bin/javac' : 'javac'
+}
+
+
+apply plugin: 'me.champeau.gradle.jmh'
+
+repositories {
+    mavenCentral()
+    maven{url 'http://jcenter.bintray.com'}
+}
+
+dependencies {
+    jmh 'commons-io:commons-io:2.4'
 }
 
 sourceSets {
@@ -59,8 +76,12 @@ repositories {
 dependencies {
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+jmh {
+    jmhVersion = '1.11.2'
+}
+
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
 
 jar {
     baseName = project.name

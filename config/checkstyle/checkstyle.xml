@@ -177,23 +177,6 @@
                       value="java.util.GregorianCalendar, java.util.Hashtable, java.util.HashSet, java.util.HashMap, java.util.ArrayList, java.util.LinkedHashSet, java.util.TreeSet, java.util.TreeMap, java.util.Vector"/>
         </module>
 
-        <module name="RegexpSinglelineJava">
-            <property name="format" value="@Repeated"/>
-            <property name="message" value="Repeated acceptance tests should not be committed!"/>
-            <property name="ignoreCase" value="true"/>
-            <property name="ignoreComments" value="true"/>
-        </module>
-
-        <module name="RegexpSinglelineJava">
-        <property name="format" value="\.mock\((Instrument|AggregateTradeReport|ExecutionReport|UserDetails|MessageFactory)\.class"/>
-            <property name="message" value="Mocking this object is not allowed, is it a Value Object or an Entity?"/>
-        </module>
-
-        <module name="RegexpSinglelineJava">
-            <property name="format" value="\/\*\-\{"/>
-            <property name="message" value="Hide native GWT calls behind the NativeBrowserCalls interface"/>
-        </module>
-
         <module name="DescendantToken">
             <property name="tokens" value="LITERAL_ASSERT"/>
             <property name="limitedTokens"
@@ -206,15 +189,6 @@
 
     <module name="SuppressWithNearbyCommentFilter">
         <property name="influenceFormat" value="1"/>
-    </module>
-
-    <!--<module name="SuppressionFilter">-->
-        <!--<property name="file" value="${checkstyle.suppressionfilename}"/>-->
-    <!--</module>-->
-
-    <module name="RegexpSingleline">
-        <property name="format" value="[a-zA-Z]+=[“”]"/>
-        <property name="message" value="Smart quotes used on HTML attribute"/>
     </module>
 
 </module>
