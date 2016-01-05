@@ -4,7 +4,7 @@ public final class FixedLoopCountMain
 {
     public static void main(final String[] args)
     {
-        while(FixedLoopCount.doLoop() != 0L)
+        while(FixedLoopCount.doLoop10() != 0L)
         {
             // ignore this checkstyle
         }
