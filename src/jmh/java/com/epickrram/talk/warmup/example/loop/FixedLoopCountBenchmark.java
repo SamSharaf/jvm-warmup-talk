@@ -26,4 +26,11 @@ public class FixedLoopCountBenchmark
     {
         return FixedLoopCount.doLoop1000();
     }
+
+    @Benchmark
+    @BenchmarkMode(Mode.AverageTime)
+    public long fixedLoopCount10000()
+    {
+        return FixedLoopCount.doLoop10000();
+    }
 }
