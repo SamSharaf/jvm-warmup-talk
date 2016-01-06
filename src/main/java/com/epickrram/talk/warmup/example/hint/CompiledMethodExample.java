@@ -1,6 +1,17 @@
 package com.epickrram.talk.warmup.example.hint;
 
-public class CompiledMethodExample
+/**
+ * Example to demonstrate compilation, inlining by C2 compiler.
+ *
+ * Run with:
+ *
+ * -XX:-TieredCompilation -XX:+UnlockDiagnosticVMOptions -XX:+PrintCompilation -XX:CompileThreshold=5000
+ *
+ * then with:
+ *
+ * -XX:-TieredCompilation -XX:+UnlockDiagnosticVMOptions -XX:+PrintCompilation -XX:CompileThreshold=1 -XX:CompileOnly="com/epickrram/talk/warmup/example/hint/CompiledMethodExample.performOps"
+ */
+public final class CompiledMethodExample
 {
     public static void main(final String[] args)
     {
