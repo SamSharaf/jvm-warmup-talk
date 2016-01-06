@@ -1,0 +1,227 @@
+<log>
+
+    <task_queued compile_id='9' compile_kind='osr'
+                 method='com/epickrram/talk/warmup/example/cha/ClassHierarchyAnalysisExample doWork ()I' bytes='116'
+                 count='1' backedge_count='28103' iicount='1' osr_bci='8' stamp='0.150' comment='backedge_count'
+                 hot_count='28103'/>
+
+    <nmethod compile_id='9' compile_kind='osr' compiler='C2' entry='0x00007fdd4d0791a0' size='3016'
+             address='0x00007fdd4d078f90' relocation_offset='296' insts_offset='528' stub_offset='1424'
+             scopes_data_offset='1696' scopes_pcs_offset='2280' dependencies_offset='2680'
+             handler_table_offset='2688' nul_chk_table_offset='3000' oops_offset='1624'
+             method='com/epickrram/talk/warmup/example/cha/ClassHierarchyAnalysisExample doWork ()I' bytes='116'
+             count='20000' backedge_count='10752' iicount='1' stamp='0.155'/>
+
+
+
+    <task compile_id='9' compile_kind='osr'
+          method='com/epickrram/talk/warmup/example/cha/ClassHierarchyAnalysisExample doWork ()I' bytes='116'
+          count='20000' backedge_count='10403' iicount='1' osr_bci='8' stamp='0.150'>
+        <phase name='parse' nodes='3' live='3' stamp='0.150'>
+            <type id='709' name='int'/>
+            <klass id='819' name='com/epickrram/talk/warmup/example/cha/ClassHierarchyAnalysisExample' flags='17'/>
+            <method id='820' holder='819' name='doWork' return='709' flags='10' bytes='116' iicount='1'/>
+            <parse method='820' uses='1' osr_bci='8' stamp='0.150'>
+                <uncommon_trap bci='8' reason='predicate' action='maybe_recompile'/>
+                <uncommon_trap bci='8' reason='loop_limit_check' action='maybe_recompile'/>
+                <bc code='162' bci='11'/>
+                <branch target_bci='114' taken='0' not_taken='22321' cnt='22321' prob='never'/>
+                <uncommon_trap bci='11' reason='unstable_if' action='reinterpret' comment='taken never'/>
+                <bc code='185' bci='19'/>
+                <klass id='822' name='com/epickrram/talk/warmup/example/cha/FirstCalculator' flags='17'/>
+                <klass id='826' name='com/epickrram/talk/warmup/example/cha/Calculator' flags='1537'/>
+                <method id='827' holder='826' name='calculateResult' return='709' arguments='709' flags='1025'
+                        bytes='0' iicount='1'/>
+                <call method='827' count='22321' prof_factor='1' virtual='1' inline='1' receiver='822'
+                      receiver_count='22321'/>
+                <method id='846' holder='822' name='calculateResult' return='709' arguments='709' flags='1'
+                        bytes='53' compile_id='8' compiler='C2' iicount='20803'/>
+                <call method='846' count='22321' prof_factor='1' inline='1'/>
+                <inline_fail reason='not an accessor'/>
+                <predicted_call bci='19' klass='822'/>
+                <uncommon_trap bci='19' reason='null_check' action='maybe_recompile'/>
+                <uncommon_trap bci='19' reason='class_check' action='maybe_recompile'
+                               comment='monomorphic vcall checkcast'/>
+                <direct_call bci='19'/>
+                <bc code='154' bci='31'/>
+                <branch target_bci='108' taken='22298' not_taken='22' cnt='22320' prob='0.999014'/>
+                <bc code='153' bci='35'/>
+                <branch target_bci='108' taken='0' not_taken='22'/>
+                <bc code='184' bci='38'/>
+                <type id='710' name='long'/>
+                <klass id='722' name='java/lang/System' flags='17'/>
+                <method id='825' holder='722' name='nanoTime' return='710' flags='265' bytes='0' compile_id='7'
+                        compile_kind='c2n' iicount='20000'/>
+                <call method='825' count='22' prof_factor='1' inline='1'/>
+                <intrinsic id='_nanoTime' nodes='4'/>
+                <bc code='183' bci='52'/>
+                <type id='711' name='void'/>
+                <klass id='782' name='java/lang/StringBuilder' flags='17'/>
+                <method id='828' holder='782' name='&lt;init&gt;' return='711' flags='1' bytes='7' iicount='154'/>
+                <call method='828' count='22' prof_factor='1' inline='1'/>
+                <inline_fail reason='not an accessor'/>
+                <direct_call bci='52'/>
+                <bc code='182' bci='57'/>
+                <klass id='717' name='java/lang/String' flags='17'/>
+                <method id='830' holder='782' name='append' return='782' arguments='717' flags='1' bytes='8'
+                        iicount='339'/>
+                <call method='830' count='22' prof_factor='1' inline='1'/>
+                <inline_fail reason='not an accessor'/>
+                <direct_call bci='57'/>
+                <bc code='182' bci='61'/>
+                <method id='831' holder='782' name='append' return='782' arguments='709' flags='1' bytes='8'
+                        iicount='30'/>
+                <call method='831' count='22' prof_factor='1' inline='1'/>
+                <inline_fail reason='executed &lt; MinInliningThreshold times'/>
+                <direct_call bci='61'/>
+                <uncommon_trap bci='61' reason='null_check' action='maybe_recompile'/>
+                <bc code='182' bci='66'/>
+                <call method='830' count='22' prof_factor='1' inline='1'/>
+                <inline_fail reason='not an accessor'/>
+                <direct_call bci='66'/>
+                <uncommon_trap bci='66' reason='null_check' action='maybe_recompile'/>
+                <bc code='182' bci='71'/>
+                <method id='833' holder='782' name='append' return='782' arguments='710' flags='1' bytes='8'
+                        iicount='30'/>
+                <call method='833' count='22' prof_factor='1' inline='1'/>
+                <inline_fail reason='executed &lt; MinInliningThreshold times'/>
+                <direct_call bci='71'/>
+                <uncommon_trap bci='71' reason='null_check' action='maybe_recompile'/>
+                <bc code='182' bci='76'/>
+                <call method='830' count='22' prof_factor='1' inline='1'/>
+                <inline_fail reason='not an accessor'/>
+                <direct_call bci='76'/>
+                <uncommon_trap bci='76' reason='null_check' action='maybe_recompile'/>
+                <bc code='182' bci='79'/>
+                <method id='835' holder='782' name='toString' return='717' flags='1' bytes='17' iicount='152'/>
+                <call method='835' count='22' prof_factor='1' inline='1'/>
+                <inline_fail reason='executed &lt; MinInliningThreshold times'/>
+                <direct_call bci='79'/>
+                <uncommon_trap bci='79' reason='null_check' action='maybe_recompile'/>
+                <bc code='182' bci='82'/>
+                <klass id='823' name='java/io/PrintStream' flags='1'/>
+                <method id='836' holder='823' name='println' return='711' arguments='717' flags='1' bytes='24'
+                        iicount='29'/>
+                <dependency type='unique_concrete_method' ctxk='823' x='836'/>
+                <call method='836' count='22' prof_factor='1' inline='1'/>
+                <inline_fail reason='executed &lt; MinInliningThreshold times'/>
+                <direct_call bci='82'/>
+                <uncommon_trap bci='82' reason='null_check' action='maybe_recompile'/>
+                <bc code='182' bci='91'/>
+                <klass id='824' name='java/util/concurrent/TimeUnit$2' flags='16392'/>
+                <method id='856' holder='824' name='toNanos' return='710' arguments='710' flags='1' bytes='11'
+                        iicount='30'/>
+                <dependency type='unique_concrete_method' ctxk='824' x='856'/>
+                <call method='856' count='22' prof_factor='1' inline='1'/>
+                <inline_fail reason='executed &lt; MinInliningThreshold times'/>
+                <direct_call bci='91'/>
+                <bc code='184' bci='94'/>
+                <klass id='840' name='java/util/concurrent/locks/LockSupport' flags='1'/>
+                <method id='841' holder='840' name='parkNanos' return='711' arguments='710' flags='9' bytes='15'
+                        iicount='29'/>
+                <call method='841' count='22' prof_factor='1' inline='1'/>
+                <inline_fail reason='executed &lt; MinInliningThreshold times'/>
+                <direct_call bci='94'/>
+                <bc code='184' bci='97'/>
+                <call method='825' count='22' prof_factor='1' inline='1'/>
+                <intrinsic id='_nanoTime' nodes='4'/>
+                <bc code='182' bci='105'/>
+                <klass id='842' name='java/util/concurrent/atomic/AtomicInteger' flags='1'/>
+                <method id='844' holder='842' name='lazySet' return='711' arguments='709' flags='17' bytes='12'
+                        iicount='28'/>
+                <call method='844' count='22' prof_factor='1' inline='1'/>
+                <inline_fail reason='executed &lt; MinInliningThreshold times'/>
+                <direct_call bci='105'/>
+                <parse_done nodes='519' live='508' memory='117032' stamp='0.151'/>
+            </parse>
+            <phase_done name='parse' nodes='521' live='344' stamp='0.151'/>
+        </phase>
+        <phase name='optimizer' nodes='521' live='344' stamp='0.151'>
+            <phase name='idealLoop' nodes='525' live='336' stamp='0.151'>
+                <loop_tree>
+                    <loop idx='525' inner_loop='1'>
+                    </loop>
+                </loop_tree>
+                <phase_done name='idealLoop' nodes='526' live='336' stamp='0.151'/>
+            </phase>
+            <phase name='escapeAnalysis' nodes='526' live='336' stamp='0.151'>
+                <phase name='connectionGraph' nodes='527' live='337' stamp='0.151'>
+                    <klass id='780' name='java/lang/AbstractStringBuilder' flags='1024'/>
+                    <method id='868' holder='780' name='expandCapacity' return='711' arguments='709' flags='0'
+                            bytes='50' iicount='221'/>
+                    <dependency type='unique_concrete_method' ctxk='780' x='868'/>
+                    <dependency type='unique_concrete_method' ctxk='780' x='868'/>
+                    <dependency type='unique_concrete_method' ctxk='780' x='868'/>
+                    <phase_done name='connectionGraph' nodes='527' live='337' stamp='0.152'/>
+                </phase>
+                <phase_done name='escapeAnalysis' nodes='527' live='337' stamp='0.152'/>
+            </phase>
+            <phase name='idealLoop' nodes='527' live='337' stamp='0.152'>
+                <loop_tree>
+                    <loop idx='525' inner_loop='1'>
+                    </loop>
+                </loop_tree>
+                <phase_done name='idealLoop' nodes='530' live='319' stamp='0.152'/>
+            </phase>
+            <phase name='idealLoop' nodes='530' live='319' stamp='0.152'>
+                <loop_tree>
+                    <loop idx='525' inner_loop='1'>
+                    </loop>
+                </loop_tree>
+                <phase_done name='idealLoop' nodes='530' live='319' stamp='0.152'/>
+            </phase>
+            <phase name='idealLoop' nodes='530' live='319' stamp='0.152'>
+                <loop_tree>
+                    <loop idx='525' inner_loop='1'>
+                    </loop>
+                </loop_tree>
+                <phase_done name='idealLoop' nodes='530' live='319' stamp='0.152'/>
+            </phase>
+            <phase name='ccp' nodes='530' live='319' stamp='0.152'>
+                <phase_done name='ccp' nodes='530' live='319' stamp='0.152'/>
+            </phase>
+            <phase name='idealLoop' nodes='530' live='314' stamp='0.152'>
+                <loop_tree>
+                    <loop idx='525' inner_loop='1'>
+                    </loop>
+                </loop_tree>
+                <phase_done name='idealLoop' nodes='533' live='314' stamp='0.152'/>
+            </phase>
+            <phase_done name='optimizer' nodes='606' live='349' stamp='0.152'/>
+        </phase>
+        <phase name='matcher' nodes='606' live='349' stamp='0.152'>
+            <phase_done name='matcher' nodes='344' live='344' stamp='0.153'/>
+        </phase>
+        <phase name='regalloc' nodes='442' live='441' stamp='0.153'>
+            <regalloc attempts='0' success='1'/>
+            <phase_done name='regalloc' nodes='579' live='551' stamp='0.154'/>
+        </phase>
+        <phase name='output' nodes='581' live='553' stamp='0.154'>
+            <phase_done name='output' nodes='616' live='576' stamp='0.154'/>
+        </phase>
+        <dependency type='unique_concrete_method' ctxk='823' x='836'/>
+        <dependency type='unique_concrete_method' ctxk='824' x='856'/>
+        <dependency type='unique_concrete_method' ctxk='780' x='868'/>
+        <code_cache total_blobs='203' nmethods='9' adapters='144' free_code_cache='49830912'/>
+        <task_done success='1' nmsize='1096' count='20000' backedge_count='10752' stamp='0.155'/>
+    </task>
+
+
+
+    <uncommon_trap thread='140588663887616' reason='class_check' action='maybe_recompile' compile_id='9'
+                   compile_kind='osr' compiler='C2' stamp='0.501'>
+        <jvms bci='19' method='com/epickrram/talk/warmup/example/cha/ClassHierarchyAnalysisExample doWork ()I'
+              bytes='116' count='20000' backedge_count='11024' iicount='1'/>
+    </uncommon_trap>
+    <uncommon_trap thread='140588663887616' reason='class_check' action='maybe_recompile' compile_id='9'
+                   compile_kind='osr' compiler='C2' count='1' state='class_check' stamp='0.502'>
+        <jvms bci='19' method='com/epickrram/talk/warmup/example/cha/ClassHierarchyAnalysisExample doWork ()I'
+              bytes='116' count='20000' backedge_count='12048' iicount='1' class_check_traps='1'/>
+    </uncommon_trap>
+    <uncommon_trap thread='140588663887616' reason='class_check' action='maybe_recompile' compile_id='9'
+                   compile_kind='osr' compiler='C2' count='2' state='class_check' stamp='0.503'>
+        <jvms bci='19' method='com/epickrram/talk/warmup/example/cha/ClassHierarchyAnalysisExample doWork ()I'
+              bytes='116' count='20000' backedge_count='13072' iicount='1' class_check_traps='2'/>
+    </uncommon_trap>
+
+</log>

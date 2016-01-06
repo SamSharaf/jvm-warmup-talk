@@ -153,12 +153,6 @@
 
         <module name="FinalClass"/>
 
-        <module name="VisibilityModifier">
-            <property name="protectedAllowed" value="true"/>
-            <property name="packageAllowed" value="false"/>
-            <property name="publicMemberPattern" value="false"/>
-        </module>
-
         <module name="MutableException"/>
 
         <module name="ArrayTypeStyle"/>
