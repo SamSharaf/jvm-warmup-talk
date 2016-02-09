@@ -42,15 +42,16 @@ public class DeOptExample
 
     private long incrementValue(long value)
     {
+        long calculated = value;
         if(flip)
         {
-            value += firstMethod(value);
+            calculated += firstMethod(value);
         }
         else
         {
-            value +=  secondMethod(value);
+            calculated +=  secondMethod(value);
         }
-        return value;
+        return calculated;
     }
 
     private static long firstMethod(final long input)

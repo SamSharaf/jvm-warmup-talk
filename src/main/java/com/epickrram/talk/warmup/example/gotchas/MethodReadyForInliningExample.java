@@ -35,7 +35,8 @@ public final class MethodReadyForInliningExample
         return value;
     }
 
-    private void checkMaxValue(long value) {
+    private void checkMaxValue(long value)
+    {
         if(value == Long.MAX_VALUE)
         {
             System.out.println("Found an unexpected value");
@@ -44,7 +45,8 @@ public final class MethodReadyForInliningExample
         }
     }
 
-    private void checkMinValue(long value) {
+    private void checkMinValue(long value)
+    {
         if(value == Long.MIN_VALUE)
         {
             System.out.println("Found an unexpected value");
@@ -53,37 +55,38 @@ public final class MethodReadyForInliningExample
         }
     }
 
-    private long square(long value) {
-        value *= value;
-        return value;
+    private long square(long value)
+    {
+        return value * value;
     }
 
-    private long addition(long value) {
-        value += 37L;
-        return value;
+    private long addition(long value)
+    {
+        return value + 37L;
     }
 
-    private long multiply(long value) {
-        value *= 17L;
-        return value;
+    private long multiply(long value)
+    {
+        return value * 17L;
     }
 
-    private long sqrt(long value) {
-        value = (long) Math.sqrt(value);
-        return value;
+    private long sqrt(long value)
+    {
+        return (long) Math.sqrt(value);
     }
 
-    private long pow(long value) {
+    private long pow(long value)
+    {
         long pow = value;
         for(int i = 0; i < 2; i++)
         {
             pow = square(pow);
         }
-        value = pow;
-        return value;
+        return pow;
     }
 
-    private static long bitShifting(long input) {
+    private static long bitShifting(long input)
+    {
         long value = input << 2;
         value = value | 0xDEADBEEFL;
         value = value >>> 2;
