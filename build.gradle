@@ -80,8 +80,8 @@ jmh {
     jmhVersion = '1.11.2'
 }
 
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 jar {
     baseName = project.name
