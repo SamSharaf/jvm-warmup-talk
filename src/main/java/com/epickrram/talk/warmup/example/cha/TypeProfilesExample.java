@@ -11,7 +11,7 @@ import java.util.concurrent.locks.LockSupport;
  *
  * -XX:+UnlockDiagnosticVMOptions -XX:+TraceClassLoading -XX:+TraceClassUnloading -XX:-TieredCompilation -XX:+LogCompilation -XX:CompileThreshold=20000
  */
-public final class ClassHierarchyAnalysisExample
+public final class TypeProfilesExample
 {
     private static final AtomicInteger ITERATION_COUNT = new AtomicInteger(0);
     public static volatile Calculator calculator;
