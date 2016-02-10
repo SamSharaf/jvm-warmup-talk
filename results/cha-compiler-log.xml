@@ -18,7 +18,7 @@
             -XX:+LogCompilation -XX:CompileThreshold=20000 -XX:-Inline
         </args>
         <command>
-            com.epickrram.talk.warmup.example.cha.ClassHierarchyAnalysisExample
+            com.epickrram.talk.warmup.example.tp.ClassHierarchyAnalysisExample
         </command>
         <launcher>
             SUN_STANDARD
@@ -38,7 +38,7 @@
             java.vm.specification.vendor=Oracle Corporation
             java.vm.specification.version=1.8
             java.vm.vendor=Oracle Corporation
-            sun.java.command=com.epickrram.talk.warmup.example.cha.ClassHierarchyAnalysisExample
+            sun.java.command=com.epickrram.talk.warmup.example.tp.ClassHierarchyAnalysisExample
             sun.java.launcher=SUN_STANDARD
         </properties>
     </vm_arguments>

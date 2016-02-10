@@ -1,4 +1,4 @@
-package com.epickrram.talk.warmup.example.cha;
+package com.epickrram.talk.warmup.example.tp;
 
 public final class SecondCalculator implements Calculator
 {
