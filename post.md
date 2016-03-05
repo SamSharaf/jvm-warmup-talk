@@ -317,6 +317,10 @@ yields the following output:
        5151  176       3       com.epickrram.t.w.e.t.C1CompilationThresholdMain::exerciseTier3CompilationThreshold (27 bytes)
 
 
+It can be seen that in this scenario, we have not triggered the invocation threshold (i.e. invocation count < 200),
+nor have we triggered the back-edge threshold. The interpreter has correctly identified the method as being worthy of compilation,
+so the runtime is able to provide an optimised version for future invocations.
+
 ## Summary
 
 We have seen that for the C1 compiler when operating in tiered mode, there are 3 flags that control when a method is considered for compilation.
