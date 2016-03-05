@@ -112,3 +112,39 @@ This pattern is repeated for larger numbers:
         128   18       3       com.epickrram.talk.warmup.example.threshold.C1CompilationThresholdMain::exerciseTier3CompileThreshold (6 bytes)
 
 
+## C1 Loop Back-edge Threshold
+
+As mentioned earlier, the JVM bytecode interpreter will also monitor loop counts within a method.
+This mechanism allows the runtime to spot that a method is *hot* despite it not being invoked many times.
+
+For example, if we have a method that contains a loop executing many thousands of times, we would want that method to be compiled,
+even if it was only invoked relatively infrequently.
+
+The relevant flag for this setting is:
+
+`Tier3BackEdgeThreshold`
+
+
+    [pricem@ares jvm-warmup-talk]$ java -XX:+PrintFlagsFinal 2>&1 | grep Tier3BackEdgeThreshold
+         intx Tier3BackEdgeThreshold                    = 60000                               {product}
+
+
+Using another example program, we can observe the interpreter emitting a compile task once the loop count within a method reaches the specified threshold:
+
+
+    [pricem@ares jvm-warmup-talk]$ bash scripts/c1-loop-backedge-threshold.sh 60416
+    LOG: Loop count is: 60416
+        137   48 %     3       com.epickrram.talk.warmup.example.threshold.C1LoopBackedgeThresholdMain::exerciseTier3LoopBackedgeThreshold @ 5 (25 bytes)
+
+
+Once again, there seems to be a slight difference in the required number of loop iterations and the specified threshold.
+In this case, we need to execute the loop `60416` times in order for the interpreter to recognise this method as *hot*.
+`60416` just happens to be `1024 * 59`, it's almost as though there's a pattern here...
+
+
+## PrintCompilation format
+
+In order to understand what is happening here, we need to take a brief foray into understanding the output from the `PrintCompilation` command.
+
+Rather than draw my own fancy graphic, I'm going to reference a slide from Doug Hawkins' excellent talk [http://www.slideshare.net/dougqh/jvm-mechanics-when-does-the](_JVM Mechanics_).
+
