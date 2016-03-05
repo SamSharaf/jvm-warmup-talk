@@ -5,7 +5,7 @@ import com.epickrram.talk.warmup.example.log.StdoutLogger;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
-public final class C1CompilationThresholdMain
+public final class C1InvocationThresholdMain
 {
     public static void main(final String[] args)
     {
@@ -35,12 +35,12 @@ public final class C1CompilationThresholdMain
         long accumulator = 0L;
         for(int i = 0; i < loopCount; i++)
         {
-            accumulator += exerciseTier3CompilationThreshold(input);
+            accumulator += exerciseTier3InvocationThreshold(input);
         }
         return accumulator;
     }
 
-    private static long exerciseTier3CompilationThreshold(final long input)
+    private static long exerciseTier3InvocationThreshold(final long input)
     {
         return 17L * input;
     }

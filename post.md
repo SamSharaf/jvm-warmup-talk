@@ -3,10 +3,30 @@ In this post, we will explore some of the various flags that can affect the oper
 Anything demonstrated in this post should come with a public health warning - these options are explored for reference only,
 and modifying them without being able to observe and reason about their effects should be avoided.
 
-My view on working with the JIT compiler is this: the JIT compiler, and the engineers who work on it are much better at
-performance tuning that I could ever hope to be.
+My view on fiddling with JIT compiler flags is this: the JIT compiler, and the engineers who work on it are much better at
+performance tuning than I could ever hope to be.
 
 You have been warned.
+
+
+## The two compilers
+
+The JVM that ships with OpenJDK contains two compiler back-ends:
+
+1. C1, also known as 'client'
+2. C2, also known as 'server'
+
+The C1 compiler has a number of different modes, and will alter its response to a compilation request given a number
+of system factors, including, but not limited to, the current workload of the C1 & C2 compiler thread pool.
+
+Given these different modes, the JDK refers to different _tiers_, which can be broken down as follows:
+
+1. Tier1 - client compiler with no profiling information
+2. Tier2 - client compiler with basic counters
+3. Tier3 - client compiler with profiling information
+4. Tier4 - server compiler
+
+From this point on, when referring to the C1 compiler, I'm talking about Tier3.
 
 
 ## Thresholds
@@ -54,14 +74,14 @@ Clone the repository, then build with:
 
 
 
-## C1 Compilation Threshold
+## C1 Compilation Invocation Threshold
 
 The first trigger that a method is likely to hit is for C1 compilation threshold.
 This threshold is specified by the flag:
 
 
     [pricem@metal ~]$ java -XX:+PrintFlagsFinal 2>&1 | grep Tier3InvocationThreshold
-    intx Tier3InvocationThreshold                  = 200                                 {product}
+    intx Tier3InvocationThreshold                  = 200
 
 This setting informs the interpreter that it should emit a compile task to the C1 compiler when an interpreted method is
 executed `200` times.
@@ -97,19 +117,19 @@ No compilation message. I'll shortcut a bit of investigation here and point out 
 
     [pricem@metal jvm-warmup-talk]$ bash ./scripts/c1-invocation-threshold.sh 256
     LOG: Loop count is: 256
-        132   47       3       com.epickrram.talk.warmup.example.threshold.C1CompilationThresholdMain::exerciseTier3CompileThreshold (6 bytes)
+        132   47       3       com.epickrram.talk.warmup.example.threshold.C1InvocationThresholdMain::exerciseTier3CompileThreshold (6 bytes)
 
 
 This pattern is repeated for larger numbers:
 
 
-    [pricem@metal jvm-warmup-talk]$ java -cp build/libs/jvm-warmup-talk-0.0.1.jar -XX:+PrintCompilation -XX:Tier3InvocationThreshold=1000 com.epickrram.talk.warmup.example.threshold.C1CompilationThresholdMain 1023 | grep -E "(LOG|epickrram)"
+    [pricem@metal jvm-warmup-talk]$ java -cp build/libs/jvm-warmup-talk-0.0.1.jar -XX:+PrintCompilation -XX:Tier3InvocationThreshold=1000 com.epickrram.talk.warmup.example.threshold.C1InvocationThresholdMain 1023 | grep -E "(LOG|epickrram)"
     LOG: Loop count is: 1023
 
 
-    [pricem@metal jvm-warmup-talk]$ java -cp build/libs/jvm-warmup-talk-0.0.1.jar -XX:+PrintCompilation -XX:Tier3InvocationThreshold=1000 com.epickrram.talk.warmup.example.threshold.C1CompilationThresholdMain 1024 | grep -E "(LOG|epickrram)"
+    [pricem@metal jvm-warmup-talk]$ java -cp build/libs/jvm-warmup-talk-0.0.1.jar -XX:+PrintCompilation -XX:Tier3InvocationThreshold=1000 com.epickrram.talk.warmup.example.threshold.C1InvocationThresholdMain 1024 | grep -E "(LOG|epickrram)"
     LOG: Loop count is: 1024
-        128   18       3       com.epickrram.talk.warmup.example.threshold.C1CompilationThresholdMain::exerciseTier3CompileThreshold (6 bytes)
+        128   18       3       com.epickrram.talk.warmup.example.threshold.C1InvocationThresholdMain::exerciseTier3CompileThreshold (6 bytes)
 
 
 ## C1 Loop Back-edge Threshold
@@ -126,7 +146,7 @@ The relevant flag for this setting is:
 
 
     [pricem@metal jvm-warmup-talk]$ java -XX:+PrintFlagsFinal 2>&1 | grep Tier3BackEdgeThreshold
-         intx Tier3BackEdgeThreshold                    = 60000                               {product}
+         intx Tier3BackEdgeThreshold                    = 60000
 
 
 Using [another example program](https://github.com/epickrram/jvm-warmup-talk/blob/master/src/main/java/com/epickrram/talk/warmup/example/threshold/C1LoopBackedgeThresholdMain.java),
@@ -228,4 +248,41 @@ Without OSR, the interpreter would have to complete the 1,000,000 iterations of 
 6. With OSR, the interpreter can dispatch to the compiled frame at the start of the next loop iteration
 7. Execution will now continue in the compiled method body
 
+
+## C1 Compilation Threshold
+
+There is one other threshold that we need to concern ourselves with, and that is the `Tier3CompileThreshold`.
+This particular setting is used to catch a method containing a loop, whose back-edge count is not high enough to trigger OSR.
+
+The heuristic for determining whether a method should be compiled,
+[described here](http://mail.openjdk.java.net/pipermail/hotspot-compiler-dev/2010-November/004239.html), looks something like this:
+
+    boolean shouldCompileMethod (invocationCount, backEdgeCount) {
+        if ( invocationCount > Tier3InvocationThreshold ) {
+            return true;
+        }
+
+        if ( invocationCount > Tier3MinInvocationThreshold &&
+             invocationCount + backEdgeCount > Tier3CompileThreshold ) {
+            return true;
+        }
+
+        return false;
+    }
+
+Given this formula, we should be able to create a scenario for triggering this threshold. In order to exercise the trigger,
+let's look at the defaults on my version of java:
+
+    intx Tier3CompileThreshold                     = 2000
+    intx Tier3InvocationThreshold                  = 200
+    intx Tier3MinInvocationThreshold               = 100
+
+We need to make sure that the method is called fewer than `Tier3InvocationThreshold` times
+and greater than `Tier3MinInvocationThreshold` times, while increasing the back-edge
+count to greater than `Tier3CompileThreshold`. On the next invocation of the method, compilation should occur.
+
+So, if we invoke a method 150 times, and it generates a loop back-edge count of 20 per invocation, then we should
+exceed the `Tier3CompileThreshold`:
+
+    150 + (150 * 20) == 3150 > Tier3CompileThreshold
 
