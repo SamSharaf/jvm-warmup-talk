@@ -125,14 +125,14 @@ The relevant flag for this setting is:
 `Tier3BackEdgeThreshold`
 
 
-    [pricem@ares jvm-warmup-talk]$ java -XX:+PrintFlagsFinal 2>&1 | grep Tier3BackEdgeThreshold
+    [pricem@metal jvm-warmup-talk]$ java -XX:+PrintFlagsFinal 2>&1 | grep Tier3BackEdgeThreshold
          intx Tier3BackEdgeThreshold                    = 60000                               {product}
 
 
 Using another example program, we can observe the interpreter emitting a compile task once the loop count within a method reaches the specified threshold:
 
 
-    [pricem@ares jvm-warmup-talk]$ bash scripts/c1-loop-backedge-threshold.sh 60416
+    [pricem@metal jvm-warmup-talk]$ bash scripts/c1-loop-backedge-threshold.sh 60416
     LOG: Loop count is: 60416
         137   48 %     3       com.epickrram.talk.warmup.example.threshold.C1LoopBackedgeThresholdMain::exerciseTier3LoopBackedgeThreshold @ 5 (25 bytes)
 
