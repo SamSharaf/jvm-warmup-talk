@@ -1,5 +1,7 @@
 package com.epickrram.talk.warmup.example.threshold;
 
+import com.epickrram.talk.warmup.example.log.StdoutLogger;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
@@ -29,7 +31,7 @@ public final class C1CompilationThresholdMain
 
     private static long wrapper(final long input, final int loopCount)
     {
-        System.out.printf("Loop count is: %d%n", loopCount);
+        StdoutLogger.log("Loop count is: %d%n", loopCount);
         long accumulator = 0L;
         for(int i = 0; i < loopCount; i++)
         {
