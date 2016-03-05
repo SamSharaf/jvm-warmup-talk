@@ -3,8 +3,6 @@ In this post, we will explore some of the various flags that can affect the oper
 Anything demonstrated in this post should come with a public health warning - these options are explored for reference only,
 and modifying them without being able to observe and reason about their effects should be avoided.
 
-My view on fiddling with JIT compiler flags is this: the JIT compiler, and the engineers who work on it are much better at
-performance tuning than I could ever hope to be.
 
 You have been warned.
 
@@ -50,17 +48,17 @@ java -XX:+PrintFlagsFinal
 
 Running this on my local install of `JDK 1.8.0_60-b27` shows that there are 772 flags available:
 
-`
-[pricem@metal ~]$ java -XX:+PrintFlagsFinal 2>&1 | wc -l
-772
-`
+
+    [pricem@metal ~]$ java -XX:+PrintFlagsFinal 2>&1 | wc -l
+    772
+
 
 For the truly intrepid, there are even more tunables available if we unlock diagnostic options (more on this later):
 
-`
-[pricem@metal ~]$ java -XX:+UnlockDiagnosticVMOptions -XX:+PrintFlagsFinal 2>&1 | wc -l
-873
-`
+
+    [pricem@metal ~]$ java -XX:+UnlockDiagnosticVMOptions -XX:+PrintFlagsFinal 2>&1 | wc -l
+    873
+
 
 ## Example code
 
@@ -69,7 +67,7 @@ Code samples from this post are available on [github](https://github.com/epickrr
 Clone the repository, then build with:
 
 `
-./gradlew build
+./gradlew clean jar
 `
 
 
@@ -87,7 +85,7 @@ This setting informs the interpreter that it should emit a compile task to the C
 executed `200` times.
 
 Observing this should be simple - all we need to do is
-[write a method](https://github.com/epickrram/jvm-warmup-talk/blob/master/src/main/java/com/epickrram/talk/warmup/example/threshold/C1CompilationThresholdMain.java#L43),
+[write a method](https://github.com/epickrram/jvm-warmup-talk/blob/master/src/main/java/com/epickrram/talk/warmup/example/threshold/C1InvocationThresholdMain.java#L43),
 call it `200` times and observe the compiler doing its work.
 
 Observing the compiler operation is a simple matter of supplying another JVM argument on start-up:
@@ -100,7 +98,7 @@ Without further ado, let us try to observe our method being compiled after `200`
 The script being called will log any statements from the program, and also any other output to stdout that is relevant to compilations for this project.
 
 We would expect to see a message saying that the
-[exerciseTier3CompileThreshold](https://github.com/epickrram/jvm-warmup-talk/blob/master/src/main/java/com/epickrram/talk/warmup/example/threshold/C1CompilationThresholdMain.java#L43)
+[exerciseTier3InvocationThreshold](https://github.com/epickrram/jvm-warmup-talk/blob/master/src/main/java/com/epickrram/talk/warmup/example/threshold/C1InvocationThresholdMain.java#L43)
 method is compiled.
 
 
@@ -114,22 +112,31 @@ No compilation message. I'll shortcut a bit of investigation here and point out 
     [pricem@metal jvm-warmup-talk]$ bash ./scripts/c1-invocation-threshold.sh 255
     LOG: Loop count is: 255
 
+Still no compilation; let's done one more invocation...
+
 
     [pricem@metal jvm-warmup-talk]$ bash ./scripts/c1-invocation-threshold.sh 256
     LOG: Loop count is: 256
-        132   47       3       com.epickrram.talk.warmup.example.threshold.C1InvocationThresholdMain::exerciseTier3CompileThreshold (6 bytes)
+        132   47       3       com.epickrram.t.w.e.t.C1InvocationThresholdMain::exerciseTier3InvocationThreshold (6 bytes)
 
+
+Finally our method is compiled.
 
 This pattern is repeated for larger numbers:
 
 
-    [pricem@metal jvm-warmup-talk]$ java -cp build/libs/jvm-warmup-talk-0.0.1.jar -XX:+PrintCompilation -XX:Tier3InvocationThreshold=1000 com.epickrram.talk.warmup.example.threshold.C1InvocationThresholdMain 1023 | grep -E "(LOG|epickrram)"
+    [pricem@metal jvm-warmup-talk]$ java -cp build/libs/jvm-warmup-talk-0.0.1.jar -XX:+PrintCompilation \
+    -XX:Tier3InvocationThreshold=1000 com.epickrram.t.w.e.t.C1InvocationThresholdMain 1023 | grep -E "(LOG|epickrram)"
     LOG: Loop count is: 1023
 
+No compilation at 1023 invocations.
 
-    [pricem@metal jvm-warmup-talk]$ java -cp build/libs/jvm-warmup-talk-0.0.1.jar -XX:+PrintCompilation -XX:Tier3InvocationThreshold=1000 com.epickrram.talk.warmup.example.threshold.C1InvocationThresholdMain 1024 | grep -E "(LOG|epickrram)"
+    [pricem@metal jvm-warmup-talk]$ java -cp build/libs/jvm-warmup-talk-0.0.1.jar -XX:+PrintCompilation \
+    -XX:Tier3InvocationThreshold=1000 com.epickrram.t.w.e.t.C1InvocationThresholdMain 1024 | grep -E "(LOG|epickrram)"
     LOG: Loop count is: 1024
-        128   18       3       com.epickrram.talk.warmup.example.threshold.C1InvocationThresholdMain::exerciseTier3CompileThreshold (6 bytes)
+        128   18       3       com.epickrram.t.w.e.t.C1InvocationThresholdMain::exerciseTier3InvocationThreshold (6 bytes)
+
+1024 invocations triggers compilation.
 
 
 ## C1 Loop Back-edge Threshold
@@ -155,7 +162,7 @@ we can observe the interpreter emitting a compile task once the loop count withi
 
     [pricem@metal jvm-warmup-talk]$ bash scripts/c1-loop-backedge-threshold.sh 60416
     LOG: Loop count is: 60416
-        137   48 %     3       com.epickrram.talk.warmup.example.threshold.C1LoopBackedgeThresholdMain::exerciseTier3LoopBackedgeThreshold @ 5 (25 bytes)
+        137   48 %     3       com.epickrram.t.w.e.t.C1LoopBackedgeThresholdMain::exerciseTier3LoopBackedgeThreshold @ 5 (25 bytes)
 
 
 Once again, there seems to be a slight difference in the required number of loop iterations and the specified threshold.
@@ -175,7 +182,7 @@ Rather than draw my own fancy graphic, I'm going to reference a slide from Doug 
 
 Using this reference, we can break down the information in the log output from our test program:
 
-        137   48 %     3       com.epickrram.talk.warmup.example.threshold.C1LoopBackedgeThresholdMain::exerciseTier3LoopBackedgeThreshold @ 5 (25 bytes)
+        137   48 %     3       com.epickrram.t.w.e.t.C1LoopBackedgeThresholdMain::exerciseTier3LoopBackedgeThreshold @ 5 (25 bytes)
 
 1. This compile happened 137 milliseconds after JVM startup
 2. Compilation ID was 48
@@ -190,7 +197,8 @@ Using this reference, we can break down the information in the log output from o
 
 Let's go and take a quick look at what these bytecode references are. If we decompile the method using `javap`:
 
-    [pricem@metal jvm-warmup-talk]$ javap -cp build/libs/jvm-warmup-talk-0.0.1.jar -c -p com.epickrram.talk.warmup.example.threshold.C1LoopBackedgeThresholdMain
+    [pricem@metal jvm-warmup-talk]$ javap -cp build/libs/jvm-warmup-talk-0.0.1.jar -c -p \
+    com.epickrram.t.w.e.t.C1LoopBackedgeThresholdMain
 
 We can see the disassembled bytecode of the method in question:
 
@@ -252,7 +260,8 @@ Without OSR, the interpreter would have to complete the 1,000,000 iterations of 
 ## C1 Compilation Threshold
 
 There is one other threshold that we need to concern ourselves with, and that is the `Tier3CompileThreshold`.
-This particular setting is used to catch a method containing a loop, whose back-edge count is not high enough to trigger OSR.
+This particular setting is used to catch a method containing a hot loop, whose back-edge count is not high enough to trigger
+on-stack replacement due to a high loop back-edge count.
 
 The heuristic for determining whether a method should be compiled,
 [described here](http://mail.openjdk.java.net/pipermail/hotspot-compiler-dev/2010-November/004239.html), looks something like this:
@@ -281,8 +290,36 @@ We need to make sure that the method is called fewer than `Tier3InvocationThresh
 and greater than `Tier3MinInvocationThreshold` times, while increasing the back-edge
 count to greater than `Tier3CompileThreshold`. On the next invocation of the method, compilation should occur.
 
-So, if we invoke a method 150 times, and it generates a loop back-edge count of 20 per invocation, then we should
+So, if we invoke a method 100 times, and it generates a loop back-edge count of 21 per invocation, then we should
 exceed the `Tier3CompileThreshold`:
 
-    150 + (150 * 20) == 3150 > Tier3CompileThreshold
+    100 + (100 * 21) == 2200 > Tier3CompileThreshold
+
+On the 101st invocation, the interpreter should trigger a compilation.
+
+Of course, given that so far each threshold seems to have had some power-of-two-based wiggle room as far as the interpreter is concerned,
+this magic formula doesn't work out exactly. In fact, in this example, the method must be executed 147 times in order for compilation to occur!
+
+Executing [this test program](https://github.com/epickrram/jvm-warmup-talk/blob/master/src/main/java/com/epickrram/talk/warmup/example/threshold/C1CompilationThresholdMain.java)
+yields the following output:
+
+    [pricem@metal jvm-warmup-talk]$ bash ./scripts/c1-compilation-threshold.sh
+    LOG: Loop count is: 21
+    LOG: Finished invocation: 1, back-edge count should be 21
+    LOG: Finished invocation: 2, back-edge count should be 42
+    LOG: Finished invocation: 3, back-edge count should be 63
+    LOG: Finished invocation: 4, back-edge count should be 84
+    ...
+    LOG: Finished invocation: 145, back-edge count should be 3045
+    LOG: Finished invocation: 146, back-edge count should be 3066
+    LOG: Pausing for a few seconds to make sure compile hasn't been triggered yet...
+    LOG: About to perform invocation 147
+       5151  176       3       com.epickrram.t.w.e.t.C1CompilationThresholdMain::exerciseTier3CompilationThreshold (27 bytes)
+
+
+## Summary
+
+We have seen that for the C1 compiler when operating in tiered mode, there are 3 flags that control when a method is considered for compilation.
+
+In my next post, I'll be looking at the corresponding flags for the C2 compiler, and how they are affected by tiered and non-tiered mode.
 
