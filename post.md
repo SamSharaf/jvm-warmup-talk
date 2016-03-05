@@ -129,7 +129,8 @@ The relevant flag for this setting is:
          intx Tier3BackEdgeThreshold                    = 60000                               {product}
 
 
-Using another example program, we can observe the interpreter emitting a compile task once the loop count within a method reaches the specified threshold:
+Using [another example program](https://github.com/epickrram/jvm-warmup-talk/blob/master/src/main/java/com/epickrram/talk/warmup/example/threshold/C1LoopBackedgeThresholdMain.java),
+we can observe the interpreter emitting a compile task once the loop count within a method reaches the specified threshold:
 
 
     [pricem@metal jvm-warmup-talk]$ bash scripts/c1-loop-backedge-threshold.sh 60416
@@ -146,5 +147,85 @@ In this case, we need to execute the loop `60416` times in order for the interpr
 
 In order to understand what is happening here, we need to take a brief foray into understanding the output from the `PrintCompilation` command.
 
-Rather than draw my own fancy graphic, I'm going to reference a slide from Doug Hawkins' excellent talk [http://www.slideshare.net/dougqh/jvm-mechanics-when-does-the](_JVM Mechanics_).
+Rather than draw my own fancy graphic, I'm going to reference a slide from Doug Hawkins' excellent talk [_JVM Mechanics_](http://www.slideshare.net/dougqh/jvm-mechanics-when-does-the).
+
+
+![PrintCompilation log format](https://raw.githubusercontent.com/epickrram/jvm-warmup-talk/master/img/print-compilation-format.png "PrintCompilation format")
+
+
+Using this reference, we can break down the information in the log output from our test program:
+
+        137   48 %     3       com.epickrram.talk.warmup.example.threshold.C1LoopBackedgeThresholdMain::exerciseTier3LoopBackedgeThreshold @ 5 (25 bytes)
+
+1. This compile happened 137 milliseconds after JVM startup
+2. Compilation ID was 48
+3. This was an _on-stack replacement_ (more on this later)
+4. This compilation happened at Tier3 (C1 profile-guided)
+5. The OSR loop bytecode index is _5_
+6. The compiled method was 25 bytecodes
+
+
+## Verifying the detail
+
+
+Let's go and take a quick look at what these bytecode references are. If we decompile the method using `javap`:
+
+    [pricem@metal jvm-warmup-talk]$ javap -cp build/libs/jvm-warmup-talk-0.0.1.jar -c -p com.epickrram.talk.warmup.example.threshold.C1LoopBackedgeThresholdMain
+
+We can see the disassembled bytecode of the method in question:
+
+      private static long exerciseTier3LoopBackedgeThreshold(long, int);
+        Code:
+           0: lload_0
+           1: lstore_3
+           2: iconst_0
+           3: istore        5
+           5: iload         5
+           7: iload_2
+           8: if_icmpge     23
+          11: ldc2_w        #22                 // long 17l
+          14: lload_3
+          15: lmul
+          16: lstore_3
+          17: iinc          5, 1
+          20: goto          5
+          23: lload_3
+          24: lreturn
+
+This tells us that the method contains 25 bytecodes, so that explains one number. We can also see the `goto` instruction at bytecode index `20`, and its target bytecode index `5`.
+
+Comparing this with the method source:
+
+    private static long exerciseTier3LoopBackedgeThreshold(final long input, final int loopCount)
+    {
+        long value = input;
+        for(int i = 0; i < loopCount; i++)
+        {
+            value = 17L * value;
+        }
+
+        return value;
+    }
+
+With a little bit of reasoning, we can figure out that bytecode `5` is the point at which we load the loop counter variable _i_ in order to do the comparison to the _loopCount_ parameter.
+
+This bytecode index then, is at the start of the loop, and would be an ideal place to jump to executing the newly compiled method.
+
+
+## On-Stack Replacement
+
+On-Stack replacement is a mechanism that allows the interpreter to take advantage of compiled code, even when it is still executing a loop for that method in interpreted mode.
+
+If we imagine a hypothetical workflow for our JVM to be:
+
+1. Start executing a method _loopyMethod_ in the interpreter
+2. Within _loopyMethod_, we execute an expensive loop body 1,000,000 times
+3. The interpreter will see that the loop count has exceeded the Tier3BackedgeThreshold setting
+4. The interpreter will request compilation of _loopyMethod_
+5. The method body is expensive and slow, and we want to start using the compiled version immediately.
+Without OSR, the interpreter would have to complete the 1,000,000 iterations of slow interpreted code,
+ dispatching to the complied method on the next call to _loopyMethod()_
+6. With OSR, the interpreter can dispatch to the compiled frame at the start of the next loop iteration
+7. Execution will now continue in the compiled method body
+
 
